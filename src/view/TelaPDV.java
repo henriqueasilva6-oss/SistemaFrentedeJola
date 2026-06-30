@@ -17,6 +17,7 @@ public class TelaPDV extends JFrame {
     private JButton btnListar;
     private JTable tabelaProdutos;
     private DefaultTableModel listaProdutos;
+    private Venda venda;
   
     public TelaPDV() {
         setTitle("Painel de Vendas");
@@ -24,6 +25,8 @@ public class TelaPDV extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
+
+        venda = new Venda();
 
         add(CadastroProdutos(), BorderLayout.NORTH);
         add(ListarProdutos(), BorderLayout.CENTER);
@@ -82,39 +85,47 @@ public class TelaPDV extends JFrame {
     return painel;  
     }
 
-    private void cadastrarProdutos() {
-    int codigo = Integer.parseInt(txtCodigo.getText());
-    String nome = txtNome.getText();
-    double preco = Double.parseDouble(txtPreco.getText());
-    int estoque = Integer.parseInt(txtEstoque.getText());
+    private void cadastrarProdutos(){
 
-    Produto produto = new Produto(codigo, nome, preco, estoque);
+        int codigo = Integer.parseInt(txtCodigo.getText());
+        String nome = txtNome.getText();
+        double preco = Double.parseDouble(txtPreco.getText());
+        int estoque = Integer.parseInt(txtEstoque.getText());
 
-    nome.add(itens);
+        Produto produto = new Produto(codigo, nome, preco, estoque);
+        ItemVenda item = new ItemVenda(produto, 1);
 
-    JOptionPane.showMessageDialog(
-            this,
-            "Produto cadastrado com sucesso!"
-    );
+        venda.adicionarItem(item);
 
-    txtCodigo.setText("");
-    txtNome.setText("");
-    txtPreco.setText("");
-    txtEstoque.setText("");
-}
+         JOptionPane.showMessageDialog(
+                this,
+                "Produtocadastrado com sucesso!"
+        );
 
-
-private void listarProdutos() {
-    listaProdutos.setRowCount(0);
-
-    for (Produto produto : itemvend) {
-        listaProdutos.addRow(new Object[] {
-                produto.getCodigo(),
-                produto.getNome(),
-                produto.getPreco(),
-                produto.getEstoque()
-        });
+        limparCampos();
     }
-}
+
+    private void listarProdutos() {
+        listaProdutos.setRowCount(0);
+
+        for (ItemVenda item : venda.getItens()) {
+            Object[] row = new Object[4];
+            row[0] = item.getProduto().getCodigo();
+            row[1] = item.getProduto().getNome();
+            row[2] = item.getProduto().getPreco();
+            row[3] = item.getProduto().getEstoque();
+
+            listaProdutos.addRow(row);
+        }
+    }
+
+    private void limparCampos() {
+        txtCodigo.setText("");
+        txtNome.setText("");
+        txtPreco.setText("");
+        txtEstoque.setText("");
+    }
 
 }
+
+    
